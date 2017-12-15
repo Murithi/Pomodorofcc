@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Pomodoro Timer</title>
+    
+    <script src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>        
+            
+            <link rel="stylesheet" href="style.css" />    
+            <link href="https://fonts.googleapis.com/css?family=Quattrocento+Sans" rel="stylesheet">        
+            
+</head>
+
+<body>
+                <div id="app" >
+             </div>
+                <script type="text/babel">
+
+        function Title() {
+            return(<div className="title">Karakana pomodoro</div> );
+        }  
+        function Footer() {
+            return(<div className="footer">Karakana 2016</div> );
+        } 
+        class Header extends React.Component {
+   
+
+        render() { 
+            return ( 
+                <div className="header">
+                    <div className="headerContent">
+                        <h3>BREAK LENGTH</h3>  
+                                <h3>
+                                <button onClick={this.props.reduceBreak}>-</button>
+                                    {this.props.breakLength}
+                                    <button onClick={this.props.addBreak}> +</button>
+                                </h3>
+                    </div>
+                <div className="headerContent">
+                    <h3>SESSION LENGTH</h3>  
+                            <h3>
+                                <button onClick={this.props.reduceSession}>-</button>
+                                {this.props.workingTime}
+                                <button onClick={this.props.addSession}>+</button></h3>
+                </div>    
+            </div> 
+                )
+        }
+    }
+
+    
+                 
+                class Content extends React.Component {
+                    constructor(props) {
+                        super(props);
+                        this.state = {  }
+                    }
+                    render() { 
+                        return (
+                            <div className="content">
+                        <h1>{this.props.elapsedTime}:{this.props.elapsedTimeSecs}</h1>
+                            </div>  
+                )
+                    }
+                }
+                 
+                
+    
+        class Pomodoro extends React.Component {
+                constructor(props) {
+                    super(props);
+                    this.state = {
+                        start:null,
+                        workingTime:2,
+                        restingTime:0,
+                        timeElapsed:0,
+                        timeElapsedSecs:0
+                     }
+                     this.handleMinusBreakLength=this.handleMinusBreakLength.bind(this)
+                     this.handleAddBreakLength=this.handleAddBreakLength.bind(this) 
+                     this.handleMinusSessionLength=this.handleMinusSessionLength.bind(this)
+                     this.handleAddSessionLength=this.handleAddSessionLength.bind(this)   
+                     
+                }
+                totalTime(timea, timeb) { 
+                    return timea + timeb;
+                }
+            componentDidMount() {
+                this.interval = setInterval(this.elapsedTime.bind(this), 1000);
+                this.setState({ start: new Date() });
+            }
+      
+ 
+            handleMinusBreakLength(){
+                if(this.state.restingTime>0) {      
+                this.setState(prevState => ({
+                    
+                  restingTime: prevState.restingTime - 1
+                        }));
+                    }    
+              };
+              
+              handleAddBreakLength(){
+                this.setState(prevState => ({
+                  restingTime: prevState.restingTime + 1
+                }));
+              };
+              
+              handleMinusSessionLength(){
+                if(this.state.workingTime>0) {         
+                this.setState(prevState => ({
+                    workingTime: prevState.workingTime - 1
+                        }));
+                    }    
+              };
+              
+              handleAddSessionLength(){
+                this.setState(prevState => ({
+                  workingTime: prevState.workingTime + 1
+                }));
+              };   
+            elapsedTime() { 
+                //how much time has elapsed
+                // let timeElapsed = Curenttime- Starttime
+                
+                        let timeElapsed = Math.floor((new Date() - this.state.start) / 60000);
+                        let timeElapsedSecs = Math.floor((new Date() - this.state.start) /1000)%60;
+                    
+                this.setState({timeElapsed: timeElapsed });
+                this.setState({'timeElapsedSecs':timeElapsedSecs});
+                
+                if (this.state.timeElapsed * 60 >= (this.state.workingTime * 60 )) { 
+                    clearInterval(this.interval);
+                    alert("Time for a break!");
+                }
+        
+            }           
+                
+            componentWillUnmount() { 
+                clearInterval(this.interval);
+            }
+            
+                render() {                    
+                        return (
+                            <div className="grid">
+                            <Title/>
+                        <Header
+                            breakLength={this.state.restingTime}
+                            workingTime={this.state.workingTime}
+                            addSession={this.handleAddSessionLength}
+                            reduceSession={this.handleMinusSessionLength}
+                            addBreak={this.handleAddBreakLength}
+                            reduceBreak={this.handleMinusBreakLength}
+                        />
+                        <Content elapsedTime={this.state.timeElapsed} elapsedTimeSecs={this.state.timeElapsedSecs}/>
+                            <Footer/>
+                    </div>                  
+                    );
+                    
+                }
+            }
+             
+             
+
+            ReactDOM.render(
+                <Pomodoro  />,
+                document.getElementById('app')
+            );
+    
+    </script>
+</body>
+
+</html>
